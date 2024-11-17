@@ -27,7 +27,7 @@ dev: build
 
 test-cov:
 	rm -rf coverage .coverage
-	$(PYTEST) pytemplate --showlocals -v
+	$(PYTEST) pytemplate
 
 test: test-cov
 
