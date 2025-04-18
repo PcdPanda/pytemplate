@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from   pytemplate               import TemplateClass
+from   pytemplate.template_class \
+                                import TemplateClass
 import pytest
 
 

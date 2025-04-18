@@ -14,7 +14,7 @@ build:
 clean:
 	$(PYTHON) setup.py clean
 
-doc:
+doc:# Need pip install sphinx breathe piccolo-theme
 	-rm -rf doc/build doc/source/generated
 	cd doc; \
 	$(MAKE) html
@@ -27,17 +27,28 @@ dev: build
 
 test-cov:
 	rm -rf coverage .coverage
-	$(PYTEST) pytemplate
+	$(PYTEST)
 
 test: test-cov
+
+clean-cpp: 
+	rm -rf src/python/cpp/lib
+	rm -rf src/cpp/build
+
+make-cpp:
+	mkdir -p src/cpp/build
+	cd src/cpp/build && cmake .. --debug-output
+	
+build-cpp: make-cpp
+	cd src/cpp/build && cmake --build .
+
+install-cpp: build-cpp
+	cd src/cpp/build && make install
 
 tidy:
 	rm -rf build
 	ruff format
-	tidy-imports . -r
-
-install: 
-	pip install .
+	tidy-imports . -r --quiet
 
 lint:
 	flake8

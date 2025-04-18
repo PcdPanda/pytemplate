@@ -1,5 +1,5 @@
 [tool.ruff]
-line-length = 79
+line-length = 120
 lint.ignore = ["F401"]
 
 [tool.ruff.format]

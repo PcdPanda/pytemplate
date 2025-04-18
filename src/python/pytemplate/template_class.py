@@ -5,8 +5,6 @@ Created by Chongdan Pan (20241024)
 
 from __future__ import annotations
 
-from   typing                   import List
-
 
 class TemplateClass(object):
     """A class template"""
@@ -14,7 +12,7 @@ class TemplateClass(object):
     def __init__(self, num: int):
         self._num = num
 
-    def get_data(self, num: int) -> List[int]:
+    def get_data(self, num: int) -> list[int]:
         """Get a list of int
 
         Args:
