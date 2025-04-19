@@ -31,6 +31,11 @@ test-cov:
 
 test: test-cov
 
+tidy:
+	rm -rf build
+	ruff format
+	tidy-imports . -r --quiet
+
 clean-cpp: 
 	rm -rf src/python/cpp/lib
 	rm -rf src/cpp/build
@@ -45,10 +50,15 @@ build-cpp: make-cpp
 install-cpp: build-cpp
 	cd src/cpp/build && make install
 
-tidy:
-	rm -rf build
-	ruff format
-	tidy-imports . -r --quiet
+install-py: 
+	pip install .
+
+install-py-dev:
+	pip install -e .
+
+install-dev: install-cpp install-py-dev
+
+install: install-cpp tidy install-py
 
 lint:
 	flake8

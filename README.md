@@ -13,4 +13,5 @@ This template using [sphinx](https://www.sphinx-doc.org/en/master/) and [Piccolo
 
 ### Install Library
 - `make install`: Install the package with config in `setup.cfg`
+- `make install-dev`: Install the package locally with config in `setup.cfg`
 
