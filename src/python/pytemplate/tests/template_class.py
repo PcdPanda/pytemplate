@@ -3,6 +3,7 @@ from __future__ import annotations
 from   pytemplate.template_class \
                                 import TemplateClass
 from   pytemplate.cy import CythonClass
+from   pytemplate.vector import vec
 import pytest
 
 
@@ -22,3 +23,9 @@ def test_cython(capsys):
     captured = capsys.readouterr()
     assert 'print' in captured.out
     assert cy.python_print() == x
+
+
+def test_libcpp(capsys):
+    vec()
+    captured = capsys.readouterr()
+    assert 'vec' in captured.out
