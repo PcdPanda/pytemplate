@@ -1,3 +1,6 @@
+# cython: cpp_locals=True
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++20
 cdef class CythonClass:
     def __cinit__(self, const double x):
         self.x = x
