@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from   Cython.Build             import cythonize
 import glob
+import os
 from   setuptools               import Extension, find_packages, setup
 
 package_name = "pytemplate"
@@ -10,9 +11,18 @@ pyx_files = glob.glob("**/*.pyx", recursive=True)
 
 # 合并 .pyx 和 .pxd 文件
 ext_modules = [
-    Extension(name=file.replace("/", ".").replace("\\", ".").replace(".pyx", ""), sources=[file], language="c++")
+    Extension(
+        name=file.replace("/", ".").replace("\\", ".").replace(".pyx", ""),
+        sources=[file],
+        language="c++",
+        extra_compile_args=["-std=c++20"],
+        extra_link_args=["-std=c++20"],
+    )
     for file in pyx_files
 ]
+os.environ["CC"] = "clang"
+os.environ["CXX"] = "clang++"
+
 
 setup(
     name=package_name,
@@ -32,5 +42,5 @@ setup(
     ],
     extras_require=dict(dev=["pytest>=8.0", "pytest-cov>=2.5.1", "pytest-sugar>=1.0.0"]),
     python_requires=">=3.11",
-    ext_modules=cythonize(ext_modules, compiler_directives={"language_level": "3"}),
+    ext_modules=cythonize(ext_modules, compiler_directives=dict(language_level=3, cpp_locals=True)),
 )
