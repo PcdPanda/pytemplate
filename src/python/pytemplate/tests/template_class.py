@@ -8,15 +8,19 @@ import pytest
 
 
 @pytest.fixture
-def template_class():
-    yield TemplateClass(3)
+def template_class() -> TemplateClass:
+    """Fixture for TemplateClass instance with value 3."""
+    return TemplateClass(3)
 
 
-def test_get_data(template_class, int_fixture):
-    assert template_class.get_data(int_fixture) == [3, 3, 3]
+def test_get_data(template_class):
+    """Test that get_data returns a list of repeated values."""
+    result = template_class.get_data(4)
+    assert result == [3, 3, 3, 3]
 
 
 def test_cython(capsys):
+    """Test CythonClass print and python_print methods."""
     x = 1
     cy = CythonClass(x)
     cy.print()
@@ -26,6 +30,7 @@ def test_cython(capsys):
 
 
 def test_libcpp(capsys):
+    """Test vec function from C++ extension."""
     vec()
     captured = capsys.readouterr()
     assert "vec" in captured.out

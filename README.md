@@ -1,17 +1,43 @@
 # pytemplate
-This is a template repo to develop package mainly writted in `Python`
 
-### Set up development environment
-- `make setup-dev`: Use `pip` to install the packages frozed in `requirements.txt`
-- `make test`: Use `pytest` to test the code 
+## Introduction
+A modern Python + Cython project template, suitable for developing high-performance Python packages with C/C++ extensions.
 
-### Doc
-This template using [sphinx](https://www.sphinx-doc.org/en/master/) and [Piccolo](https://piccolo-theme.readthedocs.io/en/latest/) to render documentations.
+## Installation
+```bash
+pip install -e .
+```
 
-- `make doc`: build the doc in the `doc` folder 
-- `render-doc`: build and host the doc
+## Build Cython Extensions
+```bash
+python setup.py build_ext --inplace
+```
 
-### Install Library
-- `make install`: Install the package with config in `setup.cfg`
-- `make install-dev`: Install the package locally with config in `setup.cfg`
+## Run Tests
+```bash
+pytest
+```
+
+## Dependencies
+- pandas >= 1.4.0
+- Cython
+
+## Build Documentation (if doc/ exists)
+```bash
+cd doc
+make html
+```
+
+## Project Structure
+```
+src/python/pytemplate/        # Main package and Cython extensions
+src/python/pytemplate/tests/  # Test cases
+setup.py                      # Build script
+pyproject.toml                # Build configuration
+requirements.txt              # Development dependencies
+README.md                     # Project documentation
+```
+
+## Contributing
+Contributions are welcome! Please open issues or pull requests.
 

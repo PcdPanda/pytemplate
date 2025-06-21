@@ -6,13 +6,13 @@ import os
 from   setuptools               import Extension, find_packages, setup
 
 package_name = "pytemplate"
-package_dir = f"./src/python"
-pyx_files = glob.glob("**/*.pyx", recursive=True)
+package_dir = "src/python"
+pyx_files = glob.glob("src/python/**/*.pyx", recursive=True)
 
 # 合并 .pyx 和 .pxd 文件
 ext_modules = [
     Extension(
-        name=file.replace("/", ".").replace("\\", ".").replace(".pyx", ""),
+        name=file.replace("src/python/", "").replace("/", ".").replace("\\", ".").replace(".pyx", ""),
         sources=[file],
         language="c++",
         extra_compile_args=["-std=c++20"],

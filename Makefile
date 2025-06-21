@@ -1,64 +1,96 @@
-.PHONY : doc clean
-PYTHON ?= python
+# Modern Python Template Makefile
+# This Makefile provides common development tasks for the PyTemplate project
+
+.PHONY: help setup-dev install install-dev test test-cov lint format clean build doc serve-doc distclean
+
+# Default target
+help: ## Show this help message
+	@echo "PyTemplate - Modern Python Template"
+	@echo "=================================="
+	@echo ""
+	@echo "Available commands:"
+	@echo ""
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+
+# Variables
+PYTHON ?= python3
+PIP ?= pip
 PYTEST ?= pytest
+PYTHONPATH := $(shell pwd)/src/python:$(PYTHONPATH)
 
+# Development setup
+setup-dev: ## Install development dependencies
+	$(PIP) install -r requirements.txt
 
-all:
+# Installation
+install: ## Install the package
+	$(PIP) install .
 
-setup-dev:
-	pip install -r requirements.txt
+install-dev: ## Install the package in development mode
+	$(PIP) install -e .
 
-build: 
-	python setup.py build_ext
+# Building
+build: ## Build the package and extensions
+	$(PYTHON) setup.py build_ext --inplace
 
-clean:
-	$(PYTHON) setup.py clean
-
-doc:# Need pip install sphinx breathe piccolo-theme
-	-rm -rf doc/build doc/source/generated
-	cd doc; \
-	$(MAKE) html
-
-render-doc: doc
-	python -m http.server --directory doc/build/html
-
-dev: build
-	python -m pip install --no-build-isolation -e .
-
-test-cov:
-	rm -rf coverage .coverage
-	$(PYTEST)
-
-test: test-cov
-
-tidy:
-	rm -rf build
-	ruff format
-	tidy-imports . -r --quiet
-
-clean-cpp: 
-	rm -rf src/python/cpp/lib
-	rm -rf src/cpp/build
-
-make-cpp:
+build-cpp: ## Build C++ components
 	mkdir -p src/cpp/build
-	cd src/cpp/build && cmake .. --debug-output
-	
-build-cpp: make-cpp
-	cd src/cpp/build && cmake --build .
+	cd src/cpp/build && cmake .. -DCMAKE_BUILD_TYPE=Release
+	cd src/cpp/build && cmake --build . --config Release
 
-install-cpp: build-cpp
-	cd src/cpp/build && make install
+# Testing
+test: ## Run tests
+	PYTHONPATH=$(PYTHONPATH) $(PYTEST) src/python/pytemplate/tests/ tests/
 
-install-py: 
-	pip install .
+test-cov: ## Run tests with coverage
+	PYTHONPATH=$(PYTHONPATH) $(PYTEST) --cov=pytemplate --cov-report=term-missing src/python/pytemplate/tests/ tests/
 
-install-py-dev:
-	pip install -e .
+# Code quality
+lint: ## Run linting checks
+	ruff check .
+	black --check --diff .
 
-install-dev: install-cpp install-py-dev
+format: ## Format code
+	black .
+	ruff format .
+	ruff check --fix .
 
-install: install-cpp tidy install-py
+# Documentation
+doc: ## Build documentation
+	cd doc && make html
 
-lint:
-	flake8
+serve-doc: doc ## Build and serve documentation locally
+	cd doc/build/html && python -m http.server 8000
+
+# Cleaning
+clean: ## Clean build artifacts
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf .pytest_cache/
+	rm -rf .coverage
+	rm -rf htmlcov/
+	rm -rf .mypy_cache/
+	rm -rf .ruff_cache/
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
+	find . -type f -name "*.so" -delete
+	find . -type f -name "*.cpp" -delete
+
+clean-cpp: ## Clean C++ build artifacts
+	rm -rf src/cpp/build/
+	rm -rf src/python/cpp/lib/
+
+distclean: clean clean-cpp ## Clean all generated files
+	rm -rf .venv/
+	rm -rf venv/
+	rm -rf .tox/
+	rm -rf doc/build/
+
+# Development utilities
+check: lint test ## Run all checks (lint, test)
+
+# Legacy compatibility
+setup: setup-dev ## Alias for setup-dev
+install-py: install ## Alias for install
+install-py-dev: install-dev ## Alias for install-dev
